@@ -7,7 +7,8 @@ import Login from "./routes/login";
 import CreateAccount from "./routes/create-account";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
-
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "./theme";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -39,7 +40,9 @@ function App() {
   return (
     <>
       <GlobalStyles />
-      <RouterProvider router={router}></RouterProvider>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router}></RouterProvider>
+      </ThemeProvider>
     </>
   );
 }
