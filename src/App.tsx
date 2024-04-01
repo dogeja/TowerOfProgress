@@ -11,6 +11,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme";
 import { useEffect, useState } from "react";
 import Loading from "./components/loading";
+import { auth } from "./firebase";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +42,7 @@ body{
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const init = async () => {
+    // await auth.authStateReady();
     setIsLoading(false);
   };
   useEffect(() => {
