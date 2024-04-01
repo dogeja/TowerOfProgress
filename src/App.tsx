@@ -9,6 +9,8 @@ import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme";
+import { useEffect, useState } from "react";
+import Loading from "./components/loading";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,11 +39,22 @@ body{
 }
 `;
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const init = async () => {
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    init();
+  });
   return (
     <>
       <GlobalStyles />
       <ThemeProvider theme={theme}>
-        <RouterProvider router={router}></RouterProvider>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <RouterProvider router={router}></RouterProvider>
+        )}
       </ThemeProvider>
     </>
   );
