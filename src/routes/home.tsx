@@ -1,11 +1,13 @@
 import { auth } from "../firebase";
 import { Button } from "@mui/material";
+import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 export default function Home() {
   const navigate = useNavigate();
   const logOut = () => {
-    auth.signOut();
-    navigate("/login");
+    signOut(auth).then(() => {
+      navigate("/login");
+    });
   };
   return (
     <div>

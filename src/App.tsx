@@ -11,6 +11,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme";
 import { useEffect, useState } from "react";
 import Loading from "./components/loading";
+import { auth } from "./firebase";
 import ProtectedRoute from "./components/protected-route";
 const router = createBrowserRouter([
   {
@@ -21,7 +22,14 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: "", element: <Home></Home> },
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <Home></Home>
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "profile",
         element: <Profile></Profile>,
