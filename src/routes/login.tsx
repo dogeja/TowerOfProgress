@@ -3,10 +3,15 @@ import { styled } from "styled-components";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
+import GithubBtn from "../components/github-btn";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -39,6 +44,14 @@ export default function login() {
   //   email error = 2
   //   password error =3
   const navigate = useNavigate();
+  //hiding password
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   return (
     <Wrapper>
@@ -57,14 +70,10 @@ export default function login() {
           }
           try {
             setIsLoading(true);
-            const credentials = await createUserWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
-            console.log(credentials.user);
-
-            navigate("/");
+            await signInWithEmailAndPassword(auth, email, password);
+            setTimeout(() => {
+              navigate("/");
+            }, 300);
           } catch (e) {
             if (e instanceof FirebaseError) {
               console.log(errorcode);
@@ -153,22 +162,59 @@ export default function login() {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setPassword(event.target.value);
             }}
-            id="outlined-basic"
+            id="outlined-pw"
             label="password"
             variant="outlined"
             required
+            type={showPassword ? "text" : "password"}
             error={errorcode == 3 ? true : false}
           ></TextField>
+          <IconButton
+            aria-label="toggle password visibility"
+            onClick={handleClickShowPassword}
+            onMouseDown={handleMouseDownPassword}
+            edge="end"
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
         </Box>
         <Button
           type="submit"
           variant="outlined"
-          sx={{ justifyItems: "right", margin: "8px", cursor: "pointer" }}
+          sx={{
+            fontSize: "1rem",
+            justifyItems: "right",
+            margin: "8px",
+            cursor: "pointer",
+          }}
         >
           {isLoading ? "loading..." : "login!"}
         </Button>
       </form>
       {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : null}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: "1rem",
+        }}
+      >
+        <GithubBtn></GithubBtn>
+        <div>New to here?</div>
+        <Button
+          variant="outlined"
+          startIcon={<AccountCircleOutlinedIcon />}
+          onClick={() => {
+            setTimeout(() => {
+              navigate("/create-account");
+            }, 300);
+          }}
+          sx={{ justifyItems: "right", margin: "1rem", cursor: "pointer" }}
+        >
+          Create Account
+        </Button>
+      </Box>
     </Wrapper>
   );
 }

@@ -8,6 +8,10 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
+import GithubBtn from "../components/github-btn";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -41,6 +45,14 @@ export default function CreateAccount() {
   //   email error = 2
   //   password error =3
   const navigate = useNavigate();
+  //hiding password
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   return (
     <Wrapper>
@@ -129,7 +141,7 @@ export default function CreateAccount() {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setName(event.target.value);
             }}
-            id="outlined-basic"
+            id="outlined-name"
             label="name"
             variant="outlined"
             required={true}
@@ -186,22 +198,60 @@ export default function CreateAccount() {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setPassword(event.target.value);
             }}
-            id="outlined-basic"
+            id="outlined-password"
             label="password"
             variant="outlined"
             required
+            type={showPassword ? "text" : "password"}
             error={errorcode == 3 ? true : false}
           ></TextField>
+          <IconButton
+            aria-label="toggle password visibility"
+            onClick={handleClickShowPassword}
+            onMouseDown={handleMouseDownPassword}
+            edge="end"
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
         </Box>
         <Button
           type="submit"
           variant="outlined"
-          sx={{ justifyItems: "right", margin: "8px", cursor: "pointer" }}
+          sx={{
+            fontSize: "1rem",
+            justifyItems: "right",
+            margin: "8px",
+            cursor: "pointer",
+          }}
         >
           {isLoading ? "loading..." : "create account!"}
         </Button>
       </form>
       {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : null}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: "1rem",
+        }}
+      >
+        <GithubBtn></GithubBtn>
+
+        <div>Already have an account?</div>
+        <Button
+          variant="outlined"
+          startIcon={<KeyOutlinedIcon />}
+          onClick={() => {
+            setTimeout(() => {
+              navigate("/login");
+            }, 300);
+          }}
+          sx={{ justifyItems: "right", margin: "1rem", cursor: "pointer" }}
+        >
+          login
+        </Button>
+      </Box>
     </Wrapper>
   );
 }

@@ -11,7 +11,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme";
 import { useEffect, useState } from "react";
 import Loading from "./components/loading";
-import { auth } from "./firebase";
 import ProtectedRoute from "./components/protected-route";
 const router = createBrowserRouter([
   {
