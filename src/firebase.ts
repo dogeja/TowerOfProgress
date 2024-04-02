@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-const KEY = process.env.API_KEY;
+const KEY = import.meta.env.VITE_SOME_KEY;
 
 const firebaseConfig = {
   apiKey: `${KEY}`,
