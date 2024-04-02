@@ -12,10 +12,15 @@ import { theme } from "./theme";
 import { useEffect, useState } from "react";
 import Loading from "./components/loading";
 import { auth } from "./firebase";
+import ProtectedRoute from "./components/protected-route";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout></Layout>,
+    element: (
+      <ProtectedRoute>
+        <Layout></Layout>
+      </ProtectedRoute>
+    ),
     children: [
       { path: "", element: <Home></Home> },
       {

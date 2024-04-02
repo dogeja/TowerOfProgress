@@ -7,6 +7,8 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
+
 const Wrapper = styled.div`
   height: 100vh;
   width: 100vw;
@@ -22,12 +24,22 @@ const SignIn = styled.h1`
   line-height: 1.325;
   margin-bottom: 1rem;
 `;
+const ErrorMessage = styled.div`
+  font-size: 1rem;
+  line-height: 1.325;
+  color: red;
+  height: 30px;
+`;
 export default function CreateAccount() {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [errorcode, setErrorcode] = useState(0);
+  //   other error = 1
+  //   email error = 2
+  //   password error =3
   const navigate = useNavigate();
 
   return (
@@ -40,6 +52,8 @@ export default function CreateAccount() {
         }}
         onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
+          setError("");
+          setErrorcode(0);
           if (isLoading || name === "" || email === "" || password === "") {
             return;
           }
@@ -56,6 +70,39 @@ export default function CreateAccount() {
             });
             navigate("/");
           } catch (e) {
+            if (e instanceof FirebaseError) {
+              console.log(errorcode);
+              switch (e.code) {
+                case "auth/user-not-found" || "auth/wrong-password":
+                  setError("이메일 혹은 비밀번호가 일치하지 않습니다.");
+                  setErrorcode(1);
+                  return;
+                case "auth/email-already-in-use":
+                  setError("이미 사용 중인 이메일입니다.");
+                  setErrorcode(2);
+                  return;
+                case "auth/weak-password":
+                  setError("비밀번호는 6글자 이상이어야 합니다.");
+                  setErrorcode(3);
+                  return;
+                case "auth/network-request-failed":
+                  setError("네트워크 연결에 실패 하였습니다.");
+                  setErrorcode(1);
+                  return;
+                case "auth/invalid-email":
+                  setError("잘못된 이메일 형식입니다.");
+                  setErrorcode(2);
+                  return;
+                case "auth/internal-error":
+                  setError("잘못된 요청입니다.");
+                  setErrorcode(1);
+                  return;
+                default:
+                  setError("로그인에 실패 하였습니다.");
+                  setErrorcode(1);
+                  return;
+              }
+            }
           } finally {
             setIsLoading(false);
           }
@@ -87,6 +134,7 @@ export default function CreateAccount() {
             variant="outlined"
             required={true}
             autoFocus
+            error={errorcode == 1 ? true : false}
           ></TextField>
         </Box>
         <Box
@@ -114,7 +162,7 @@ export default function CreateAccount() {
             label="email"
             variant="outlined"
             required
-            autoFocus
+            error={errorcode == 2 ? true : false}
           ></TextField>
         </Box>
         <Box
@@ -142,18 +190,18 @@ export default function CreateAccount() {
             label="password"
             variant="outlined"
             required
-            autoFocus
+            error={errorcode == 3 ? true : false}
           ></TextField>
         </Box>
         <Button
           type="submit"
           variant="outlined"
           sx={{ justifyItems: "right", margin: "8px", cursor: "pointer" }}
-          value={isLoading ? "loading..." : "create account!"}
         >
-          create account!
+          {isLoading ? "loading..." : "create account!"}
         </Button>
       </form>
+      {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : null}
     </Wrapper>
   );
 }
