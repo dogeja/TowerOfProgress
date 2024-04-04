@@ -15,7 +15,7 @@ import { auth } from "./firebase";
 import ProtectedRoute from "./components/protected-route";
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: (
       <ProtectedRoute>
         <Layout></Layout>
