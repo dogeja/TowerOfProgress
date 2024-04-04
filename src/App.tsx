@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./routes/home";
 import Profile from "./routes/profile";
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import Login from "./routes/login";
 import CreateAccount from "./routes/create-account";
 import { createGlobalStyle } from "styled-components";
@@ -13,6 +13,13 @@ import { useEffect, useState } from "react";
 import Loading from "./components/loading";
 import { auth } from "./firebase";
 import ProtectedRoute from "./components/protected-route";
+const check = () => {
+  console.log(auth.currentUser);
+};
+setInterval(() => {
+  check();
+}, 2000);
+
 const router = createBrowserRouter([
   {
     path: "",
@@ -24,11 +31,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <ProtectedRoute>
-            <Home></Home>
-          </ProtectedRoute>
-        ),
+        element: <Home></Home>,
       },
       {
         path: "profile",

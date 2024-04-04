@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
+
 export default function Home() {
   const navigate = useNavigate();
   const logOut = () => {
